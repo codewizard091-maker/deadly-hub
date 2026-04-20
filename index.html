@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deadly Time | Hub</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+
+        :root {
+            --accent-purple: #b464ff;
+            --text-main: #d1d1d1;
+        }
+
+        ::-webkit-scrollbar { width: 0; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #000;
+            color: var(--text-main);
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            perspective: 1000px;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+        }
+
+        body.loaded { opacity: 1; }
+        body.fade-out { opacity: 0; pointer-events: none; }
+
+        #network-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: linear-gradient(135deg, #1a0b2e 0%, #0a0510 50%, #000000 100%);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            z-index: 10;
+        }
+
+        .header h1 {
+            font-weight: 900;
+            font-size: 55px;
+            letter-spacing: 20px;
+            text-transform: uppercase;
+            color: #fff;
+            text-shadow: 0 0 30px rgba(180, 100, 255, 0.4);
+            animation: titlePulse 4s ease-in-out infinite;
+        }
+
+        @keyframes titlePulse {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); }
+        }
+
+        .hub-container {
+            display: flex;
+            gap: 40px;
+            z-index: 10;
+            transition: transform 0.1s ease-out;
+            transform-style: preserve-3d;
+        }
+
+        .hub-card {
+            width: 300px;
+            height: 400px;
+            background: rgba(15, 5, 25, 0.7);
+            border: 1px solid rgba(180, 100, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hub-card:hover {
+            transform: translateY(-20px) translateZ(20px);
+            border-color: var(--accent-purple);
+            background: rgba(180, 100, 255, 0.1);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(180, 100, 255, 0.2);
+        }
+
+        .hub-card h2 {
+            font-weight: 900;
+            font-size: 22px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .sub-text {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--accent-purple);
+            font-size: 13px;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            font-weight: 700;
+            text-shadow: 0 0 8px var(--accent-purple);
+        }
+
+        .hub-card p {
+            font-size: 11px;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-align: center;
+            padding: 0 30px;
+            line-height: 1.6;
+        }
+
+        .hub-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(0deg, var(--accent-purple) 0%, transparent 50%);
+            opacity: 0;
+            transition: 0.5s;
+        }
+
+        .hub-card:hover::after { opacity: 0.05; }
+
+        .footer {
+            position: absolute;
+            bottom: 40px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            color: #222;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="network-canvas"></canvas>
+
+    <div class="header">
+        <h1>DEADLY HUB</h1>
+    </div>
+
+    <div class="hub-container" id="parallax-container">
+        <a href="store.html" class="hub-card transition-link">
+            <h2>МАГАЗИН</h2>
+            <div class="sub-text">Покупка ролей</div>
+            <p>Покупка ролей на сервере дискорд</p>
+        </a>
+
+        <a href="application.html" class="hub-card transition-link">
+            <h2>НАБОР</h2>
+            <div class="sub-text">Заявка в клан</div>
+            <p>Стань частью доминирующей силы на сервере</p>
+        </a>
+
+        <a href="rules.html" class="hub-card transition-link">
+            <h2>RULES</h2>
+            <div class="sub-text">Кодекс поведения</div>
+            <p>Ознакомьтесь с правилами сервера перед игрой</p>
+        </a>
+    </div>
+
+    <div class="footer">STAY DEADLY // ACCESS GRANTED</div>
+
+    <script>
+        // ЛОГИКА ПЕРЕХОДОВ
+        window.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('loaded');
+        });
+
+        document.querySelectorAll('.transition-link').forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                const target = link.getAttribute('href');
+                document.body.classList.add('fade-out');
+                setTimeout(() => {
+                    window.location.href = target;
+                }, 550);
+            });
+        });
+
+        // ФОН (МОЛНИИ / ЧАСТИЦЫ)
+        const canvas = document.getElementById('network-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height, particles = [];
+        const particleCount = 200; 
+        const connectionRadius = 150;
+
+        const container = document.getElementById('parallax-container');
+        document.addEventListener('mousemove', e => {
+            if (window.innerWidth > 768) {
+                const xAxis = (window.innerWidth / 2 - e.clientX) / 80;
+                const yAxis = (window.innerHeight / 2 - e.clientY) / 80;
+                container.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            }
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * window.innerWidth;
+                this.y = Math.random() * window.innerHeight;
+                this.speedX = (Math.random() - 0.5) * 0.6; 
+                this.speedY = (Math.random() - 0.5) * 0.6;
+                this.size = Math.random() * 1.2 + 0.5;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > width || this.x < 0) this.speedX *= -1;
+                if (this.y > height || this.y < 0) this.speedY *= -1;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(180, 100, 255, 0.5)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < connectionRadius) {
+                        ctx.strokeStyle = `rgba(180, 100, 255, ${(1 - dist / connectionRadius) * 0.2})`;
+                        ctx.lineWidth = 0.8;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+        animate();
+    </script>
+</body>
+</html>
