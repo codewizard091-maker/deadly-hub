@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deadly Time | Rules</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+
+        :root {
+            --accent-purple: #b464ff;
+            --text-main: #d1d1d1;
+            --bg-dark: #0a0510;
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: var(--accent-purple); border-radius: 10px; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #000;
+            color: var(--text-main);
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+            overflow-x: hidden;
+            perspective: 1000px;
+        }
+
+        body.loaded { opacity: 1; }
+        body.fade-out { opacity: 0; }
+
+        #network-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: linear-gradient(135deg, #1a0b2e 0%, #0a0510 50%, #000000 100%);
+        }
+
+        .rules-wrapper {
+            width: 850px;
+            z-index: 10;
+            transition: transform 0.1s ease-out;
+            margin: 40px 0;
+        }
+
+        .rules-card {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(180, 100, 255, 0.2);
+            padding: 60px;
+            border-radius: 4px;
+            box-shadow: 0 0 100px rgba(0, 0, 0, 1);
+        }
+
+        .header { text-align: center; margin-bottom: 50px; }
+        .header h1 { 
+            font-weight: 900; font-size: 35px; letter-spacing: 15px; 
+            text-transform: uppercase; color: #fff; 
+            text-shadow: 0 0 20px rgba(180, 100, 255, 0.5);
+        }
+        .header p { 
+            font-family: 'Share Tech Mono'; color: var(--accent-purple); 
+            font-size: 12px; letter-spacing: 4px; margin-top: 10px;
+        }
+
+        .section { margin-bottom: 40px; }
+        .section-title {
+            font-size: 14px; font-weight: 900; letter-spacing: 3px;
+            color: #fff; text-transform: uppercase;
+            border-left: 3px solid var(--accent-purple);
+            padding-left: 15px; margin-bottom: 25px;
+        }
+
+        .rule-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: 0.3s;
+        }
+        .rule-row:hover { background: rgba(180, 100, 255, 0.03); padding-left: 10px; }
+
+        .rule-info { flex: 1; }
+        .rule-num { font-family: 'Share Tech Mono'; color: var(--accent-purple); margin-right: 15px; font-weight: 700; }
+        .rule-text { font-size: 13px; color: #ccc; }
+
+        .punishment {
+            font-family: 'Share Tech Mono';
+            font-size: 11px;
+            text-transform: uppercase;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 6px 12px;
+            border-radius: 2px;
+            color: #ff4d4d; /* Красный для санкций */
+            border: 1px solid rgba(255, 77, 77, 0.2);
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .punishment.low { color: #ffae42; border-color: #ffae42; } /* Предупреждение */
+        .punishment.high { background: #ff4d4d; color: #000; font-weight: 900; } /* Бан */
+
+        .back-nav {
+            text-align: center; margin-top: 40px;
+        }
+        .back-nav a {
+            color: #444; text-decoration: none; font-size: 10px;
+            text-transform: uppercase; letter-spacing: 3px; transition: 0.3s;
+        }
+        .back-nav a:hover { color: var(--accent-purple); letter-spacing: 5px; }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="network-canvas"></canvas>
+
+    <div class="rules-wrapper" id="parallax-rules">
+        <div class="rules-card">
+            <div class="header">
+                <h1>RULES</h1>
+                <p>СИСТЕМА «НАРУШЕНИЕ = САНКЦИЯ»</p>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Раздел 1. Голосовые каналы</div>
+                
+                <div class="rule-row">
+                    <div class="rule-info"><span class="rule-num">1.0</span><span class="rule-text">Посторонние звуки (музыка, эхо, шум)</span></div>
+                    <div class="punishment low">МУТ (30 МИН)</div>
+                </div>
+
+                <div class="rule-row">
+                    <div class="rule-info"><span class="rule-num">1.1</span><span class="rule-text">Намеренный звуковой флуд</span></div>
+                    <div class="punishment">МУТ (2 Ч) + СТРИК</div>
+                </div>
+
+                <div class="rule-row">
+                    <div class="rule-info"><span class="rule-num">1.2</span><span class="rule-text">Крик, визг, истерика в связи</span></div>
+                    <div class="punishment">МУТ (1 ЧАС)</div>
+                </div>
+
+                <div class="rule-row">
+                    <div class="rule-info"><span class="rule-num">1.3</span><span class="rule-text">Скрежет/шум (не настроен микрофон)</span></div>
+                    <div class="punishment low">ПРЕДУПРЕЖДЕНИЕ</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Раздел 2. Текстовые каналы</div>
+                
+                <div class="rule-row">
+                    <div class="rule-info"><span class="rule-num">2.0</span><span class="rule-text">Реклама сторонних ресурсов</span></div>
+                    <div class="punishment high">BAN</div>
+                </div>
+
+                <div class="rule-row">
+                    <div class="rule-info"><span class="rule-num">2.1</span><span class="rule-text">@everyone / @here без причины</span></div>
+                    <div class="punishment">МУТ (2 Ч) + СНЯТИЕ РОЛИ</div>
+                </div>
+
+                <div class="rule-row">
+                    <div class="rule-info"><span class="rule-num">2.2</span><span class="rule-text">Флуд (>5 сообщений подряд)</span></div>
+                    <div class="punishment low">МУТ (30 МИН)</div>
+                </div>
+
+                <div class="rule-row">
+                    <div class="rule-info"><span class="rule-num">2.3</span><span class="rule-text">Капс (длиннее 20 символов)</span></div>
+                    <div class="punishment low">МУТ (15 МИН)</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Раздел 3. Поведение</div>
+                
+                <div class="rule-row">
+                    <div class="rule-info"><span class="rule-num">3.0</span><span class="rule-text">Оскорбление участника</span></div>
+                    <div class="punishment">МУТ (6 ЧАСОВ) + СТРИК</div>
+                </div>
+
+                <div class="rule-row">
+                    <div class="rule-info"><span class="rule-num">3.1</span><span class="rule-text">Токсичность, травля, буллинг</span></div>
+                    <div class="punishment">24 Ч МУТ / БАН</div>
+                </div>
+
+                <div class="rule-row">
+                    <div class="rule-info"><span class="rule-num">3.2</span><span class="rule-text">Политика, религия, ЛГБТ</span></div>
+                    <div class="punishment low">МУТ (1 ЧАС)</div>
+                </div>
+
+                <div class="rule-row">
+                    <div class="rule-info"><span class="rule-num">3.3</span><span class="rule-text">Доксинг / Слив личной информации</span></div>
+                    <div class="punishment high">МГНОВЕННЫЙ БАН</div>
+                </div>
+            </div>
+
+            <div class="back-nav">
+                <a href="index.html" class="transition-link">← ВЕРНУТЬСЯ В ХАБ</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => document.body.classList.add('loaded'));
+        
+        document.querySelectorAll('.transition-link').forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                document.body.classList.add('fade-out');
+                setTimeout(() => window.location.href = link.href, 550);
+            });
+        });
+
+        const canvas = document.getElementById('network-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height, particles = [];
+
+        const card = document.getElementById('parallax-rules');
+        document.addEventListener('mousemove', e => {
+            const xAxis = (window.innerWidth / 2 - e.clientX) / 90;
+            const yAxis = (window.innerHeight / 2 - e.clientY) / 90;
+            card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * window.innerWidth;
+                this.y = Math.random() * window.innerHeight;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+            }
+            update() {
+                this.x += this.speedX; this.y += this.speedY;
+                if (this.x > width || this.x < 0) this.speedX *= -1;
+                if (this.y > height || this.y < 0) this.speedY *= -1;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(180, 100, 255, 0.4)';
+                ctx.beginPath(); ctx.arc(this.x, this.y, 1, 0, Math.PI * 2); ctx.fill();
+            }
+        }
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            particles = [];
+            for (let i = 0; i < 150; i++) particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update(); particles[i].draw();
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 150) {
+                        ctx.strokeStyle = `rgba(180, 100, 255, ${(1 - dist / 150) * 0.15})`;
+                        ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        window.addEventListener('resize', resize);
+        resize(); animate();
+    </script>
+</body>
+</html>
